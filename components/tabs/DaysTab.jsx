@@ -23,6 +23,7 @@ export default function DaysTab({ data, u }) {
     const newDay = {
       id: `day${Date.now()}`,
       dayNum: nextNum,
+      dayLabel: `Day ${nextNum}`,
       dateLabel: "TBD",
       title: "New Day",
       summary: "Add day summary...",
@@ -65,7 +66,7 @@ export default function DaysTab({ data, u }) {
               border: sel ? "none" : "1px solid rgba(0,0,0,0.1)",
               fontFamily: "'Sen',sans-serif", transition: "all 0.2s",
             }}>
-              <div style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: sel ? (wedding ? "rgba(250,248,245,0.7)" : "#B8977E") : "#888", marginBottom: 4 }}>Day {d.dayNum}</div>
+              <Editable value={d.dayLabel ?? `Day ${d.dayNum}`} onChange={v => u(data => { const found = data.days.find(x => x.id === d.id); if (found) found.dayLabel = v; })} tag="div" style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: sel ? (wedding ? "rgba(250,248,245,0.7)" : "#B8977E") : "#888", marginBottom: 4 }} />
               <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 18, fontWeight: 400 }}>{d.title}</div>
               <div style={{ fontSize: 10, color: sel ? "rgba(250,248,245,0.5)" : "#aaa", marginTop: 4 }}>{d.dateLabel}</div>
             </button>
@@ -86,12 +87,13 @@ export default function DaysTab({ data, u }) {
           {/* Day header */}
           {day.dayNum === 3 ? (
             <div style={{ background: "#722F37", color: "#FAF8F5", padding: "24px 28px", marginBottom: 24 }}>
-              <div style={{ fontSize: 10, letterSpacing: 3, textTransform: "uppercase", color: "rgba(250,248,245,0.6)", marginBottom: 6 }}>The Main Event</div>
+              <Editable value={day.dayLabel ?? "The Main Event"} onChange={v => updateDayField("dayLabel", v)} tag="div" style={{ fontSize: 10, letterSpacing: 3, textTransform: "uppercase", color: "rgba(250,248,245,0.6)", marginBottom: 6, display: "block" }} />
               <Editable value={day.title} onChange={v => updateDayField("title", v)} tag="div" style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 28, fontWeight: 300, display: "block" }} />
               <Editable value={day.dateLabel} onChange={v => updateDayField("dateLabel", v)} tag="div" style={{ fontSize: 13, color: "rgba(250,248,245,0.5)", marginTop: 4, display: "block" }} />
             </div>
           ) : (
             <div style={{ marginBottom: 24 }}>
+              <Editable value={day.dayLabel ?? `Day ${day.dayNum}`} onChange={v => updateDayField("dayLabel", v)} tag="div" style={{ fontSize: 10, letterSpacing: 3, textTransform: "uppercase", color: "#B8977E", marginBottom: 6, display: "block" }} />
               <Editable value={day.title} onChange={v => updateDayField("title", v)} tag="div" style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 28, fontWeight: 300, marginBottom: 4, display: "block" }} />
               <Editable value={day.dateLabel} onChange={v => updateDayField("dateLabel", v)} tag="div" style={{ fontSize: 13, color: "#888", display: "block" }} />
             </div>

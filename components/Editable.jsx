@@ -22,6 +22,7 @@ export default function Editable({ value, onChange, tag: Tag = "span", style = {
       return (
         <textarea
           value={draft}
+          onClick={e => e.stopPropagation()}
           onChange={e => setDraft(e.target.value)}
           onBlur={() => { setEditing(false); onChange(draft); }}
           onKeyDown={e => e.key === "Escape" && (setEditing(false), setDraft(value))}
@@ -33,6 +34,7 @@ export default function Editable({ value, onChange, tag: Tag = "span", style = {
     return (
       <input
         value={draft}
+        onClick={e => e.stopPropagation()}
         onChange={e => setDraft(e.target.value)}
         onBlur={() => { setEditing(false); onChange(draft); }}
         onKeyDown={e => {
@@ -47,7 +49,7 @@ export default function Editable({ value, onChange, tag: Tag = "span", style = {
 
   return (
     <Tag
-      onClick={() => setEditing(true)}
+      onClick={e => { e.stopPropagation(); setEditing(true); }}
       style={{ ...style, cursor: "pointer", borderBottom: "1px dashed transparent", transition: "border-color 0.2s" }}
       onMouseEnter={e => (e.currentTarget.style.borderBottomColor = "#B8977E")}
       onMouseLeave={e => (e.currentTarget.style.borderBottomColor = "transparent")}
