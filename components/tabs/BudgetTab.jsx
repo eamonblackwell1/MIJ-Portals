@@ -32,7 +32,8 @@ export default function BudgetTab({ data, u }) {
     fontFamily: "'Sen',sans-serif",
     background: "#fff",
   };
-  const formatMoney = (n) => `AU$${(Number(n) || 0).toLocaleString()}`;
+  const currencyPrefix = data.currency || "AU$";
+  const formatMoney = (n) => `${currencyPrefix}${(Number(n) || 0).toLocaleString()}`;
   const planningFee = Number(data.planningFee) || 0;
 
   const vendorLow = data.budget.reduce((s, b) => s + (b.isConfirmed ? (Number(b.confirmed) || 0) : (Number(b.low) || 0)), 0);
