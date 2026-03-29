@@ -103,7 +103,7 @@ export default function Dashboard({ initialData, dashboardId }) {
 
   const waitingCount = data.decisions.filter(d => d.status === "active").length;
 
-  const tabs = [
+  const allTabs = [
     { key: "overview", label: "Overview" },
     { key: "days", label: "Day by Day" },
     { key: "decisions", label: "Decisions" },
@@ -111,6 +111,8 @@ export default function Dashboard({ initialData, dashboardId }) {
     { key: "checklist", label: "Master Plan" },
     { key: "budget", label: "Budget" },
   ];
+  const hidden = new Set(data.hiddenTabs || []);
+  const tabs = allTabs.filter(t => !hidden.has(t.key));
 
   return (
     <div style={{ fontFamily: "'Sen',sans-serif", background: "#FAF8F5", minHeight: "100vh", color: "#1a1a1a" }}>
