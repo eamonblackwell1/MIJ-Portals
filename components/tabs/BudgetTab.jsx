@@ -123,7 +123,15 @@ export default function BudgetTab({ data, u }) {
             <td style={{ padding: "12px 0", borderBottom: "1px solid rgba(0,0,0,0.05)", fontSize: 14, fontWeight: 600 }}>Planning Fee</td>
             <td style={{ padding: "12px 0", borderBottom: "1px solid rgba(0,0,0,0.05)", fontSize: 14, textAlign: "right", color: "#aaa" }}>-</td>
             <td style={{ padding: "12px 0", borderBottom: "1px solid rgba(0,0,0,0.05)", fontSize: 14, textAlign: "right", color: "#aaa" }}>-</td>
-            <td style={{ padding: "12px 0", borderBottom: "1px solid rgba(0,0,0,0.05)", fontSize: 14, textAlign: "right", color: "#5a8a5a", fontWeight: 600 }}>{formatMoney(planningFee)}</td>
+            <td style={{ padding: "12px 0", borderBottom: "1px solid rgba(0,0,0,0.05)", fontSize: 14, textAlign: "right", color: "#5a8a5a", fontWeight: 600 }}>
+              <input
+                value={planningFee}
+                onChange={e => u(d => { d.planningFee = parseMoneyInput(e.target.value); })}
+                inputMode="numeric"
+                style={{ ...moneyInputStyle, width: 116, borderColor: "rgba(90,138,90,0.45)", color: "#5a8a5a", fontWeight: 600 }}
+                aria-label="Planning fee"
+              />
+            </td>
             <td style={{ padding: "12px 0", borderBottom: "1px solid rgba(0,0,0,0.05)", fontSize: 12, textAlign: "right", color: "#5a8a5a" }}>Confirmed</td>
             <td style={{ padding: "12px 0", borderBottom: "1px solid rgba(0,0,0,0.05)", width: 30 }}></td>
           </tr>

@@ -160,7 +160,7 @@ export default function DaysTab({ data, u }) {
             {relatedItems.map(item => (
               <div key={item.id} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 0", borderBottom: "1px solid rgba(0,0,0,0.05)" }}>
                 <span style={{ fontSize: 12, color: "#999", minWidth: 32 }}>{item.num ? `${item.num}.` : ""}</span>
-                <OwnerPill owner={item.owner} />
+                <OwnerPill owner={item.owner} coupleLabel={data.coupleLabel} />
                 <div style={{ flex: 1, fontSize: 14, color: "#333", lineHeight: 1.5 }}>{item.task}</div>
                 <span style={{
                   fontFamily: "'Sen',sans-serif",
@@ -193,10 +193,11 @@ function statusColor(status) {
   return "#aaa";
 }
 
-function OwnerPill({ owner }) {
+function OwnerPill({ owner, coupleLabel }) {
+  const shortLabel = coupleLabel ? coupleLabel.split(/\s+and\s+|\s*&\s*/i).map(n => n[0]).join("&") : "C";
   const map = {
     us: { label: "MIJ", color: "#722F37", background: "rgba(114,47,55,0.08)", border: "none" },
-    them: { label: "V&J", color: "#722F37", background: "transparent", border: "1px solid rgba(114,47,55,0.35)" },
+    them: { label: shortLabel, color: "#722F37", background: "transparent", border: "1px solid rgba(114,47,55,0.35)" },
     shared: { label: "Both", color: "#96734e", background: "rgba(184,151,126,0.12)", border: "none" },
   };
   const style = map[owner] || map.shared;

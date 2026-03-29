@@ -14,11 +14,13 @@ const phaseLabels = {
   POST: "Post-wedding",
 };
 
-const ownerOptions = [
-  { value: "mij", label: "Married in Japan" },
-  { value: "shared", label: "Shared" },
-  { value: "vj", label: "Vanessa and Jeremy" },
-];
+function ownerOptions(coupleLabel) {
+  return [
+    { value: "mij", label: "Married in Japan" },
+    { value: "shared", label: "Shared" },
+    { value: "vj", label: coupleLabel || "Couple" },
+  ];
+}
 
 const statusOptions = [
   { value: "not-started", label: "Not Started" },
@@ -46,7 +48,7 @@ export default function ChecklistTab({ data, u }) {
     const existing = d.inProgress.find(x => x.sourceChecklistId === id);
     if (existing) {
       existing.task = item.task;
-      existing.owner = ownerDisplayLabel(item.owner);
+      existing.owner = ownerDisplayLabel(item.owner, d.coupleLabel);
       return;
     }
 
@@ -54,7 +56,7 @@ export default function ChecklistTab({ data, u }) {
       id: `p${Date.now()}`,
       sourceChecklistId: id,
       task: item.task,
-      owner: ownerDisplayLabel(item.owner),
+      owner: ownerDisplayLabel(item.owner, d.coupleLabel),
       started: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
       notes: Array.isArray(item.notes) ? [...item.notes] : [],
     });
@@ -184,7 +186,7 @@ function FragmentRow({ item, owner, status, isOpen, onToggle, onChange, onStatus
             onChange={e => onChange(item.id, "owner", e.target.value)}
             style={ownerSelectStyle(owner)}
           >
-            {ownerOptions.map(o => (
+            {ownerOptions(data.coupleLabel).map(o => (
               <option key={o.value} value={o.value}>{o.label}</option>
             ))}
           </select>
@@ -256,10 +258,10 @@ function normalizePhase(phase) {
   return "12+";
 }
 
-function ownerDisplayLabel(owner) {
+function ownerDisplayLabel(owner, coupleLabel) {
   const normalized = normalizeOwner(owner);
   if (normalized === "mij") return "Married in Japan";
-  if (normalized === "vj") return "Vanessa and Jeremy";
+  if (normalized === "vj") return coupleLabel || "Couple";
   return "Shared";
 }
 
