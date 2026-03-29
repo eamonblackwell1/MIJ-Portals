@@ -129,6 +129,7 @@ export default function ChecklistTab({ data, u }) {
                 item={item}
                 owner={owner}
                 status={status}
+                coupleLabel={data.coupleLabel}
                 onToggle={() => setOpenTaskId(isOpen ? null : item.id)}
                 onChange={updateItem}
                 onStatusChange={updateStatus}
@@ -142,7 +143,7 @@ export default function ChecklistTab({ data, u }) {
   );
 }
 
-function FragmentRow({ item, owner, status, isOpen, onToggle, onChange, onStatusChange, onDelete }) {
+function FragmentRow({ item, owner, status, coupleLabel, isOpen, onToggle, onChange, onStatusChange, onDelete }) {
   return (
     <>
       <tr style={{ opacity: status === "done" ? 0.55 : 1 }}>
@@ -186,7 +187,7 @@ function FragmentRow({ item, owner, status, isOpen, onToggle, onChange, onStatus
             onChange={e => onChange(item.id, "owner", e.target.value)}
             style={ownerSelectStyle(owner)}
           >
-            {ownerOptions(data.coupleLabel).map(o => (
+            {ownerOptions(coupleLabel).map(o => (
               <option key={o.value} value={o.value}>{o.label}</option>
             ))}
           </select>
