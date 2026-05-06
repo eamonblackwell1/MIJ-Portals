@@ -50,7 +50,13 @@ export default function Editable({ value, onChange, tag: Tag = "span", style = {
   return (
     <Tag
       onClick={e => { e.stopPropagation(); setEditing(true); }}
-      style={{ ...style, cursor: "pointer", borderBottom: "1px dashed transparent", transition: "border-color 0.2s" }}
+      style={{
+        ...style,
+        ...(multiline ? { whiteSpace: "pre-wrap" } : {}),
+        cursor: "pointer",
+        borderBottom: "1px dashed transparent",
+        transition: "border-color 0.2s",
+      }}
       onMouseEnter={e => (e.currentTarget.style.borderBottomColor = "#B8977E")}
       onMouseLeave={e => (e.currentTarget.style.borderBottomColor = "transparent")}
       title="Click to edit"
