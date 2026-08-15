@@ -4,7 +4,7 @@ Companion to `mij-client-portal-brief.md`. Nothing here is built yet.
 
 ## Scope in one line
 
-Everything on today's tracker ships, plus a Wedding Day run sheet and a Documents tab. Notion is the only datastore. The portal is fully read-only: zero writes back to Notion. Pilot on Olivia + Hansung.
+Everything on today's tracker ships, plus a Wedding Day run sheet and a Documents tab. Notion is the only datastore. The portal is fully read-only: zero writes back to Notion. Pilot on Ashlee + Michael (Olivia + Hansung had almost no data).
 
 ## 0. What I verified
 
@@ -45,11 +45,11 @@ Everything on today's tracker ships, plus a Wedding Day run sheet and a Document
 | Header (names, location, dates, guests) | Client DB: Client Name, Ceremony Location, Travel Dates (fallback Ceremony Date), # of Guests | Currency symbol from `Currency`: AUD → AU$, USD → US$, JPY → ¥ |
 | Overview: milestones | Client DB `Status` pipeline order | done / current / upcoming from position in the pipeline; no dates |
 | Overview: "needs input" count | MIJ Tasks, Owner = Client, urgent bucket (see below) | |
-| Day by Day | Wedding Week rows, sorted by `Day` | `Tasks` and `Decisions Needed` are plain text; one line per row |
-| Run sheet (new) | Wedding Day rows, grouped by Phase, sorted by Start | On Day by Day, the ceremony day card gets a "View run sheet" affordance that opens a detailed view (Morning / Afternoon / Evening blocks with Start, Location, Description, Point Person, Status). Other days keep the standard card |
+| Day by Day | Wedding Week rows, sorted by `Day` | Title, Date, Description only. Events, Tasks, Decisions Needed, Travel & Logistics, Accommodation are internal and never rendered. Team rewrites Descriptions to be client-facing |
+| Run sheet (new) | Wedding Day rows, sorted by Start (Phase/Block/Location/Point Person are mostly empty in practice, so render as an ordered timeline of Start + Description; show the other fields only when present) | On Day by Day, the ceremony day card gets a "View run sheet" affordance that opens a detailed view (Morning / Afternoon / Evening blocks with Start, Location, Description, Point Person, Status). Other days keep the standard card |
 | Decisions ("things we need from you") | MIJ Tasks, Owner = Client | Grouped by the due-date rule below. Read only |
 | Tasks | MIJ Tasks, Owner ≠ Client, Triaged = true | In progress / completed by Status. Read only |
-| Master Plan | Wedding Checklist rows | Timeline → phase; Category → group; Not started / In progress / Locked → not-started / in-progress / done; N/A hidden. Owner column dropped |
+| Master Plan | Wedding Checklist rows | Item, Category, Due Date (formula), Status only. Notes is internal and never rendered. Timeline → phase; Not started / In progress / Locked → not-started / in-progress / done; N/A hidden. Owner column dropped |
 | Budget | Budget Items DB (new) + Client `Budget`, `Planning Fee`, `Currency` | Estimate and Actual per line, totals for both; planning fee always the single figure from the Client row |
 | Documents (new tab) | Client Documents DB (new) | Grouped by Type, links via `/api/doc/<id>` |
 | Hidden tabs | Client DB `Portal Hidden Tabs` | Replaces `data.hiddenTabs` |
@@ -80,15 +80,16 @@ All new databases go under the "Married in Japan" parent page (`296bf8a6-bba6-83
 - `Status` (select: Researching / Quoted / Booked / Paid / Not needed)
 - `Vendor` (text, optional)
 - `Notes` (text, shown to couple)
-- `Show on Portal` (checkbox, default on)
+- `Hide from Portal` (checkbox; unchecked = visible)
 
 **Client Documents (new)**
 - `Name` (title)
 - `Client` (relation → Client Database)
 - `Type` (select: Proposal / Contract / Venue estimate / Hotel estimate / Vendor quote / Other)
 - `File` (files & media)
+- `Link` (url, for Google Drive or other external links)
 - `Notes` (text)
-- `Show on Portal` (checkbox, default on)
+- `Hide from Portal` (checkbox; unchecked = visible)
 
 **MIJ Tasks, Wedding Checklist, Wedding Week, Wedding Day**: no schema changes.
 
@@ -111,6 +112,9 @@ All new databases go under the "Married in Japan" parent page (`296bf8a6-bba6-83
 - Portal password stored plaintext on the Client row (simple provisioning; visible to anyone with access to that database).
 - Milestones derive from Client Status; no target dates.
 - Master Plan owner column dropped.
+- Pilot client is Ashlee + Michael. Eamon also needs their updated budget, so the Budget tab gets real data first.
+- Internal planner text stays internal: Day by Day renders only Title, Date, Description; Master Plan renders only Item, Category, Due Date, Status. Team rewrites Wedding Week Descriptions to be client-facing.
+- Step 1 (Notion setup) completed 2026-08-15. Budget Items `collection://126c154a-f069-4fc3-bfd8-f02cfdec5537`, Client Documents `collection://88b32931-046f-46af-8289-ad3994749697`.
 
 ## 6. Remaining open question
 
