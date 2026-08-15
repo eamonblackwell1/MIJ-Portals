@@ -117,10 +117,12 @@ export default function BudgetTab({ data }) {
         </div>
       )}
 
+      {(items.length > 0 || planningFee != null) && (
       <p style={{ fontSize: 12, color: "#aaa", lineHeight: 1.7, margin: 0 }}>
         Estimates are our best current figures and will firm up as vendors are booked. Actuals reflect quotes or invoices we have in hand.
         {jpy ? "" : " Vendor costs are shown in your currency for planning purposes; some vendors invoice in Japanese yen."}
       </p>
+      )}
     </div>
   );
 }

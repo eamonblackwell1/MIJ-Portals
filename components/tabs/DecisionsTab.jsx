@@ -10,7 +10,7 @@ function DecisionCard({ d, coupleLabel }) {
           ? <span style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: "#5a8a5a", fontWeight: 600 }}>Resolved</span>
           : <PriorityBadge priority={d.priority} />}
         <div style={{ fontSize: 12, color: d.overdue ? "#722F37" : "#888", fontWeight: d.overdue ? 600 : 400 }}>
-          {resolved ? "" : d.overdue ? `Was due ${d.deadline}` : `by ${d.deadline}`}
+          {resolved || !d.deadline ? "" : d.overdue ? `Was due ${d.deadline}` : `by ${d.deadline}`}
         </div>
       </div>
       <h3 style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 22, fontWeight: 400, margin: "0 0 6px", textDecoration: resolved ? "line-through" : "none" }}>{d.title}</h3>

@@ -65,7 +65,7 @@ export default function OverviewTab({ data, setTab }) {
                     <h3 style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 21, fontWeight: 400, margin: "8px 0 4px" }}>{d.title}</h3>
                     {d.description && <p style={{ fontSize: 13, color: "#666", margin: 0, lineHeight: 1.7 }}>{d.description}</p>}
                   </div>
-                  <div style={{ fontSize: 12, color: d.overdue ? "#722F37" : "#888", whiteSpace: "nowrap" }}>by {d.deadline}</div>
+                  {d.deadline && <div style={{ fontSize: 12, color: d.overdue ? "#722F37" : "#888", whiteSpace: "nowrap" }}>by {d.deadline}</div>}
                 </div>
               </div>
             ))}
