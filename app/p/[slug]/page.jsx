@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
-import { findClientBySlug, loadPortalData } from "@/lib/notion/portal";
+import { findClientBySlug } from "@/lib/notion/portal";
+import { loadPortalData } from "@/lib/notion/cached";
 import { verifySessionToken, SESSION_COOKIE } from "@/lib/session";
 import Dashboard from "@/components/Dashboard";
 import PasswordGate from "@/components/PasswordGate";
