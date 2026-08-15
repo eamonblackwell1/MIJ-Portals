@@ -1,36 +1,41 @@
 import { NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
-import { getSupabaseServer } from "@/lib/supabase-server";
+import { findClientBySlug } from "@/lib/notion/portal";
+import { createSessionToken, sessionCookieOptions, safeEqual, SESSION_COOKIE } from "@/lib/session";
+
+export const runtime = "nodejs";
 
 export async function POST(request) {
+  let body;
   try {
-    const { slug, password } = await request.json();
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Bad request" }, { status: 400 });
+  }
+  const slug = String(body?.slug ?? "").trim();
+  const password = String(body?.password ?? "");
+  if (!slug || !password) {
+    return NextResponse.json({ error: "Missing slug or password" }, { status: 400 });
+  }
 
-    if (!slug || !password) {
-      return NextResponse.json({ error: "Missing slug or password" }, { status: 400 });
-    }
-
-    const supabase = getSupabaseServer();
-    const { data, error } = await supabase
-      .from("dashboards")
-      .select("password_hash")
-      .eq("slug", slug)
-      .single();
-
-    if (error || !data) {
-      return NextResponse.json({ error: "Not found" }, { status: 404 });
-    }
-
-    const valid = await bcrypt.compare(password, data.password_hash);
-    if (!valid) {
+  try {
+    const client = await findClientBySlug(slug);
+    // Same response for unknown slug, disabled portal, and wrong password.
+    if (!client || !client.enabled || !client.password || !safeEqual(password, client.password)) {
       return NextResponse.json({ error: "Invalid password" }, { status: 401 });
     }
-
-    // Simple opaque token — stored in localStorage as a "was authenticated" flag
-    const token = crypto.randomUUID();
-    return NextResponse.json({ token });
+    const token = createSessionToken({ slug, clientId: client.id });
+    const res = NextResponse.json({ ok: true });
+    res.cookies.set(SESSION_COOKIE, token, sessionCookieOptions());
+    return res;
   } catch (err) {
     console.error("Auth error:", err);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
+}
+
+// Sign out
+export async function DELETE() {
+  const res = NextResponse.json({ ok: true });
+  res.cookies.set(SESSION_COOKIE, "", { ...sessionCookieOptions(), maxAge: 0 });
+  return res;
 }

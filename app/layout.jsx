@@ -1,6 +1,7 @@
 export const metadata = {
-  title: "Married in Japan — Planning Portal",
+  title: "Married in Japan Planning Portal",
   description: "Your wedding planning dashboard",
+  robots: { index: false, follow: false, nocache: true },
 };
 
 export default function RootLayout({ children }) {

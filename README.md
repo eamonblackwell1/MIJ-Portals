@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Married in Japan Client Portal
 
-## Getting Started
+Read-only client portal rendered live from the Married in Japan Notion workspace. Next.js on Vercel. Notion is the only datastore; the portal never writes to it.
 
-First, run the development server:
+See `docs/notion-sync-plan.md` for the architecture and `docs/mij-client-portal-brief.md` for the original brief.
+
+## Run locally
 
 ```bash
+npm install
+cp .env.example .env.local   # then fill in NOTION_TOKEN and PORTAL_SECRET
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000/p/<portal-slug>`.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Environment variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Name | Purpose |
+|---|---|
+| `NOTION_TOKEN` | Internal integration token for "MIJ Automation" (starts `ntn_`). Server only. |
+| `PORTAL_SECRET` | Long random string used to sign session cookies. Server only. |
 
-## Learn More
+Set both on the Vercel project. No other configuration is needed.
 
-To learn more about Next.js, take a look at the following resources:
+## Provision a client (no code, no deploy)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+On the client's row in the Notion **Client Database**:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. `Portal Slug`: a random lowercase string, 8 to 12 characters, letters and numbers only. Never a name. Generate one with `node -e 'console.log(require("crypto").randomBytes(8).toString("base64url").replace(/[-_]/g,"").toLowerCase().slice(0,10))'`.
+2. `Portal Password`: the password the couple will type.
+3. `Portal Enabled`: tick it.
+4. Optional: `Portal Hidden Tabs`, `Portal Budget Note`.
 
-## Deploy on Vercel
+Send the couple `https://<domain>/p/<slug>` and the password. Untick `Portal Enabled` to switch the portal off.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Where each tab reads from
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Tab | Notion source | Fields shown |
+|---|---|---|
+| Header | Client Database | Client Name, Ceremony Location, Travel Dates (or Ceremony Date), # of Guests, Currency |
+| Overview timeline | Client Database `Status` | Position in the status pipeline |
+| Day by Day | Wedding Week (Client relation) | Title, Date, Description. Run sheet from Wedding Day (Start, Block, Description, Location, Point Person) |
+| Decisions | MIJ Tasks, Owner = Client | Task, Priority, Due Date, Status |
+| Tasks | MIJ Tasks, Owner ≠ Client, Triaged | Task, Owner, Status |
+| Master Plan | Wedding Checklist (Client relation) | Item, Category, Timeline, Due Date, Status |
+| Budget | Budget Items (Client relation) + Client `Budget`, `Planning Fee`, `Currency` | Item, Category, Estimate, Actual, Status, Vendor, Notes |
+| Documents | Client Documents (Client relation) | Name, Type, File or Link, Notes |
+
+Anything not listed here (Wedding Week Events / Tasks / Decisions Needed / Travel & Logistics, Checklist Notes, MIJ Tasks Notes) is internal and never rendered.
+
+Data is cached per client for two minutes. Rows with `Hide from Portal` ticked are skipped.
+
+## Debug
+
+```bash
+npm run notion:dump -- <portal-slug>            # full mapped payload
+npm run notion:dump -- <portal-slug> budget     # one section
+```

@@ -1,139 +1,49 @@
 "use client";
-import { useState } from "react";
 import { SectionLabel, AccentLine, PriorityBadge, StatusDot } from "@/components/shared";
-import Editable from "@/components/Editable";
 
-export default function OverviewTab({ data, setTab, u }) {
-  const [draggingMilestoneId, setDraggingMilestoneId] = useState(null);
+export default function OverviewTab({ data, setTab }) {
   const activeDecisions = data.decisions.filter(d => d.status === "active");
-  const updateMilestone = (id, field, value) => u(d => {
-    const milestone = d.milestones.find(x => x.id === id);
-    if (milestone) milestone[field] = value;
-  });
-  const removeMilestone = (id) => u(d => {
-    d.milestones = d.milestones.filter(x => x.id !== id);
-  });
-  const addMilestone = () => u(d => {
-    d.milestones.push({
-      id: `m${Date.now()}`,
-      label: "New Milestone",
-      target: "TBD",
-      status: "upcoming",
-    });
-  });
-  const toggleMilestoneDone = (id) => u(d => {
-    const milestone = d.milestones.find(x => x.id === id);
-    if (!milestone) return;
-    milestone.status = milestone.status === "done" ? "upcoming" : "done";
-  });
-  const reorderMilestones = (fromId, toId) => u(d => {
-    const fromIndex = d.milestones.findIndex(x => x.id === fromId);
-    const toIndex = d.milestones.findIndex(x => x.id === toId);
-    if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) return;
-    const [moved] = d.milestones.splice(fromIndex, 1);
-    d.milestones.splice(toIndex, 0, moved);
-  });
+  const milestones = data.milestones || [];
 
   return (
     <div>
       {/* Timeline */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
-        <SectionLabel>Your Timeline</SectionLabel>
-        <button
-          onClick={addMilestone}
-          style={{
-            width: 24,
-            height: 24,
-            borderRadius: "50%",
-            border: "1px solid rgba(114,47,55,0.28)",
-            background: "transparent",
-            color: "#722F37",
-            cursor: "pointer",
-            fontSize: 16,
-            lineHeight: 1,
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
-            marginTop: -8,
-          }}
-          title="Add milestone"
-        >
-          +
-        </button>
-      </div>
+      <SectionLabel>Your Timeline</SectionLabel>
       <AccentLine />
       <div style={{ display: "flex", gap: 0, marginBottom: 56, overflowX: "auto", paddingBottom: 8 }}>
-        {data.milestones.map((m, i) => (
-          <div
-            key={m.id}
-            draggable
-            onDragStart={() => setDraggingMilestoneId(m.id)}
-            onDragEnd={() => setDraggingMilestoneId(null)}
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={() => {
-              if (draggingMilestoneId && draggingMilestoneId !== m.id) reorderMilestones(draggingMilestoneId, m.id);
-              setDraggingMilestoneId(null);
-            }}
-            style={{
-              flex: "1 0 110px",
-              textAlign: "center",
-              position: "relative",
-              cursor: "grab",
-              opacity: draggingMilestoneId === m.id ? 0.6 : 1,
-            }}
-            title="Drag to reorder"
-          >
-            <button
-              onClick={() => toggleMilestoneDone(m.id)}
-              title={m.status === "done" ? "Click to mark as not done" : "Click to mark as done"}
-              style={{
-                width: 34,
-                height: 34,
-                borderRadius: "50%",
-                margin: "0 auto 10px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: 12,
-                fontWeight: 700,
-                background: m.status === "done" ? "#722F37" : "transparent",
-                color: m.status === "done" ? "#FAF8F5" : "#bbb",
-                border: m.status === "done" ? "2px solid #722F37" : "2px solid #ddd",
-                fontFamily: "'Sen',sans-serif",
-                cursor: "pointer",
-                padding: 0,
-              }}
-            >
-              {m.status === "done" ? "✓" : `${i + 1}`.padStart(2, "0")}
-            </button>
-            <Editable
-              value={m.label}
-              onChange={v => updateMilestone(m.id, "label", v)}
-              tag="div"
-              style={{ fontSize: 12, fontWeight: 600, marginBottom: 2, display: "block" }}
-            />
-            <Editable
-              value={m.target}
-              onChange={v => updateMilestone(m.id, "target", v)}
-              tag="div"
-              style={{ fontSize: 11, color: "#888", display: "block" }}
-            />
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", marginTop: 6 }}>
-              <button
-                onClick={() => removeMilestone(m.id)}
-                style={{ border: "none", background: "none", color: "#bbb", cursor: "pointer", fontSize: 12 }}
-                title="Remove milestone"
+        {milestones.map((m, i) => {
+          const done = m.status === "done";
+          const current = m.status === "current";
+          return (
+            <div key={m.id} style={{ flex: "1 0 110px", textAlign: "center", position: "relative" }}>
+              <div
+                style={{
+                  width: 34,
+                  height: 34,
+                  borderRadius: "50%",
+                  margin: "0 auto 10px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: 12,
+                  fontWeight: 700,
+                  background: done ? "#722F37" : current ? "#FAF8F5" : "transparent",
+                  color: done ? "#FAF8F5" : current ? "#722F37" : "#bbb",
+                  border: done || current ? "2px solid #722F37" : "2px solid #ddd",
+                  boxShadow: current ? "0 0 0 4px rgba(114,47,55,0.12)" : "none",
+                }}
               >
-                ×
-              </button>
+                {done ? "✓" : `${i + 1}`.padStart(2, "0")}
+              </div>
+              <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 2, color: current ? "#722F37" : "#1a1a1a" }}>{m.label}</div>
+              <div style={{ fontSize: 11, color: "#888" }}>{done ? "Done" : current ? "In progress" : "Upcoming"}</div>
+              {i < milestones.length - 1 && (
+                <div style={{ position: "absolute", top: 17, left: "calc(50% + 22px)", right: "calc(-50% + 22px)", height: 1, background: done ? "#722F37" : "#ddd" }} />
+              )}
             </div>
-            {i < data.milestones.length - 1 && (
-              <div style={{ position: "absolute", top: 17, left: "calc(50% + 22px)", right: "calc(-50% + 22px)", height: 1, background: m.status === "done" ? "#722F37" : "#ddd" }} />
-            )}
-          </div>
-        ))}
+          );
+        })}
       </div>
-      <div style={{ marginBottom: 46 }} />
 
       {/* Needs Input */}
       {activeDecisions.length > 0 && (
@@ -153,15 +63,15 @@ export default function OverviewTab({ data, setTab, u }) {
                   <div>
                     <PriorityBadge priority={d.priority} />
                     <h3 style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 21, fontWeight: 400, margin: "8px 0 4px" }}>{d.title}</h3>
-                    <p style={{ fontSize: 13, color: "#666", margin: 0, lineHeight: 1.7 }}>{d.description}</p>
+                    {d.description && <p style={{ fontSize: 13, color: "#666", margin: 0, lineHeight: 1.7 }}>{d.description}</p>}
                   </div>
-                  <div style={{ fontSize: 12, color: "#888", whiteSpace: "nowrap" }}>by {d.deadline}</div>
+                  <div style={{ fontSize: 12, color: d.overdue ? "#722F37" : "#888", whiteSpace: "nowrap" }}>by {d.deadline}</div>
                 </div>
               </div>
             ))}
             {activeDecisions.length > 4 && (
-              <button onClick={() => setTab("decisions")} style={{ fontSize: 13, color: "#722F37", background: "none", border: "none", cursor: "pointer", padding: 8, textAlign: "center" }}>
-                View all {activeDecisions.length} decisions →
+              <button onClick={() => setTab("decisions")} style={{ fontFamily: "'Sen',sans-serif", fontSize: 13, color: "#722F37", background: "none", border: "none", cursor: "pointer", padding: 8, textAlign: "center" }}>
+                View all {activeDecisions.length} items
               </button>
             )}
           </div>
@@ -172,7 +82,8 @@ export default function OverviewTab({ data, setTab, u }) {
       <div style={{ marginBottom: 56 }}>
         <SectionLabel>What We're Working On</SectionLabel>
         <AccentLine />
-        {data.inProgress.map(p => (
+        {data.inProgress.length === 0 && <p style={{ fontSize: 13, color: "#aaa", fontStyle: "italic" }}>Nothing in progress right now.</p>}
+        {data.inProgress.slice(0, 8).map(p => (
           <div key={p.id} style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "14px 0", borderBottom: "1px solid rgba(0,0,0,0.05)" }}>
             <StatusDot />
             <div>
@@ -181,13 +92,19 @@ export default function OverviewTab({ data, setTab, u }) {
             </div>
           </div>
         ))}
+        {data.inProgress.length > 8 && (
+          <button onClick={() => setTab("progress")} style={{ fontFamily: "'Sen',sans-serif", fontSize: 13, color: "#722F37", background: "none", border: "none", cursor: "pointer", padding: "12px 0" }}>
+            View all {data.inProgress.length} tasks
+          </button>
+        )}
       </div>
 
       {/* Completed */}
       <div>
-        <SectionLabel>Completed</SectionLabel>
+        <SectionLabel>Recently Completed</SectionLabel>
         <AccentLine />
-        {data.completed.map(c => (
+        {data.completed.length === 0 && <p style={{ fontSize: 13, color: "#aaa", fontStyle: "italic" }}>Nothing completed yet.</p>}
+        {data.completed.slice(0, 8).map(c => (
           <div key={c.id} style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "10px 0", borderBottom: "1px solid rgba(0,0,0,0.04)" }}>
             <span style={{ color: "#5a8a5a", fontSize: 13, flexShrink: 0 }}>✓</span>
             <div style={{ flex: 1, fontSize: 13, color: "#666" }}>{c.task}</div>

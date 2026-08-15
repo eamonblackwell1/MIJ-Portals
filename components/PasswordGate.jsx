@@ -1,7 +1,9 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
-export default function PasswordGate({ slug, onSuccess }) {
+export default function PasswordGate({ slug }) {
+  const router = useRouter();
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -19,9 +21,8 @@ export default function PasswordGate({ slug, onSuccess }) {
       });
 
       if (res.ok) {
-        const { token } = await res.json();
-        localStorage.setItem(`mij_auth_${slug}`, token);
-        onSuccess();
+        // Cookie is set by the server; re-render the page as signed in.
+        router.refresh();
       } else {
         setError("Incorrect password. Please try again.");
       }
