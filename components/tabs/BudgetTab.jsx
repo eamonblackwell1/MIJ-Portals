@@ -9,7 +9,6 @@ const STATUS_COLOR = {
   Quoted: "#96734e",
   Booked: "#722F37",
   Paid: "#5a8a5a",
-  "Locked in": "#5a8a5a",
   "Not needed": "#aaa",
 };
 
