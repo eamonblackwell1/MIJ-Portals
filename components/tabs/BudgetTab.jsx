@@ -1,8 +1,8 @@
 "use client";
 import { SectionLabel, AccentLine } from "@/components/shared";
 
-const cell = { padding: "12px 0", borderBottom: "1px solid rgba(0,0,0,0.05)", fontSize: 14 };
-const num = { ...cell, textAlign: "right", whiteSpace: "nowrap" };
+const cell = { padding: "12px 0", borderBottom: "1px solid rgba(0,0,0,0.05)", fontSize: 14, minWidth: 170 };
+const num = { ...cell, textAlign: "right", whiteSpace: "nowrap", paddingLeft: 28, minWidth: 72 };
 
 const STATUS_COLOR = {
   Researching: "#888",
@@ -52,11 +52,12 @@ export default function BudgetTab({ data }) {
       )}
 
       {(items.length > 0 || planningFee != null) && (
-        <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: 16 }}>
+        <div style={{ overflowX: "auto", marginBottom: 16 }}>
+        <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr>
               {["Item", "Estimate", "Actual", "Status"].map((h, i) => (
-                <th key={h} style={{ padding: "12px 0", borderBottom: "1px solid rgba(0,0,0,0.1)", fontSize: 11, letterSpacing: 2, textTransform: "uppercase", textAlign: i === 0 ? "left" : "right", fontWeight: 600 }}>{h}</th>
+                <th key={h} style={{ padding: "12px 0", paddingLeft: i === 0 ? 0 : 28, borderBottom: "1px solid rgba(0,0,0,0.1)", fontSize: 11, letterSpacing: 2, textTransform: "uppercase", textAlign: i === 0 ? "left" : "right", fontWeight: 600, whiteSpace: "nowrap" }}>{h}</th>
               ))}
             </tr>
           </thead>
@@ -74,7 +75,7 @@ export default function BudgetTab({ data }) {
                 </td>
                 <td style={num}>{b.estimate != null ? fmt(b.estimate) : dash}</td>
                 <td style={{ ...num, color: b.actual != null ? "#1a1a1a" : undefined, fontWeight: b.actual != null ? 600 : 400 }}>{b.actual != null ? fmt(b.actual) : dash}</td>
-                <td style={{ ...num, fontSize: 11, letterSpacing: 1, textTransform: "uppercase", color: STATUS_COLOR[b.status] || "#888" }}>{b.status || ""}</td>
+                <td style={{ ...num, fontSize: 11, letterSpacing: 1, textTransform: "uppercase", color: STATUS_COLOR[b.status] || "#888" }}>{b.status || dash}</td>
               </tr>
             ))}
             {planningFee != null && (
@@ -87,6 +88,7 @@ export default function BudgetTab({ data }) {
             )}
           </tbody>
         </table>
+        </div>
       )}
 
       {/* Totals */}
