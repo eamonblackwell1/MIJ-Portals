@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import OverviewTab from "@/components/tabs/OverviewTab";
 import DaysTab from "@/components/tabs/DaysTab";
@@ -22,8 +22,24 @@ const ALL_TABS = [
 export default function Dashboard({ data }) {
   const router = useRouter();
   const hidden = new Set(data.hiddenTabs || []);
-  const tabs = ALL_TABS.filter(t => !hidden.has(t.key));
+  // A hidden tab can be revealed by visiting the portal with its key as the URL
+  // hash (e.g. /p/<slug>#budget). Convenience for planners, not a security boundary.
+  const [revealed, setRevealed] = useState(null);
+  const tabs = ALL_TABS.filter(t => !hidden.has(t.key) || t.key === revealed);
   const [tab, setTab] = useState(tabs[0]?.key ?? "overview");
+  useEffect(() => {
+    const read = () => {
+      const h = (window.location.hash || "").slice(1).toLowerCase();
+      if (ALL_TABS.some(t => t.key === h) && (data.hiddenTabs || []).includes(h)) {
+        setRevealed(h);
+        setTab(h);
+      }
+    };
+    read();
+    window.addEventListener("hashchange", read);
+    return () => window.removeEventListener("hashchange", read);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const waitingCount = (data.decisions || []).filter(d => d.status === "active").length;
 
