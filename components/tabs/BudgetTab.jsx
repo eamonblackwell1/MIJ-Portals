@@ -22,7 +22,6 @@ export default function BudgetTab({ data }) {
   const planningFee = data.planningFee;
   const desired = data.desiredBudget;
 
-  const sumEstimate = items.reduce((s, b) => s + (b.estimate ?? 0), 0);
   const sumActual = items.reduce((s, b) => s + (b.actual ?? 0), 0);
   // For the projected total, use the actual where one exists, else the estimate.
   const projected = items.reduce((s, b) => s + (b.actual ?? b.estimate ?? 0), 0) + (planningFee ?? 0);
@@ -98,22 +97,10 @@ export default function BudgetTab({ data }) {
             <span style={{ fontSize: 15, fontWeight: 700 }}>Projected Total</span>
             <span style={{ fontSize: 15, fontWeight: 700 }}>{fmt(projected)}</span>
           </div>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 10 }}>
-            <span style={{ fontSize: 12, letterSpacing: 1, textTransform: "uppercase", color: "#888" }}>Estimated vendor costs</span>
-            <span style={{ fontSize: 13, color: "#888" }}>{fmt(sumEstimate)}</span>
-          </div>
           {anyActual && (
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 8 }}>
               <span style={{ fontSize: 12, letterSpacing: 1, textTransform: "uppercase", color: "#5a8a5a" }}>Confirmed so far</span>
               <span style={{ fontSize: 14, fontWeight: 600, color: "#5a8a5a" }}>{fmt(committed)}</span>
-            </div>
-          )}
-          {desired != null && (
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 8 }}>
-              <span style={{ fontSize: 12, letterSpacing: 1, textTransform: "uppercase", color: projected > desired ? "#722F37" : "#888" }}>
-                {projected > desired ? "Over target by" : "Under target by"}
-              </span>
-              <span style={{ fontSize: 13, color: projected > desired ? "#722F37" : "#888" }}>{fmt(Math.abs(desired - projected))}</span>
             </div>
           )}
         </div>
