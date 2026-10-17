@@ -2,11 +2,14 @@
 import { useState } from "react";
 import { SectionLabel, AccentLine } from "@/components/shared";
 
+// Keep in step with TIMELINE_ORDER in lib/notion/ids.js.
 const PHASE_LABELS = {
   "12mo": "12 months out",
   "9mo": "9 months out",
   "6mo": "6 months out",
+  "4mo": "4 months out",
   "3mo": "3 months out",
+  "2mo": "2 months out",
   "1mo": "1 month out",
   "Wedding Week": "Wedding week",
 };
@@ -16,6 +19,18 @@ const STATUS = {
   "in-progress": { label: "In Progress", color: "#96734e" },
   done: { label: "Locked In", color: "#5a8a5a" },
 };
+
+function YourActionTag() {
+  return (
+    <span style={{
+      display: "inline-block", marginLeft: 8, verticalAlign: "middle",
+      fontSize: 9, letterSpacing: 1.5, textTransform: "uppercase", fontWeight: 600,
+      background: "rgba(114,47,55,0.1)", color: "#722F37", padding: "2px 7px", whiteSpace: "nowrap",
+    }}>
+      Your action
+    </span>
+  );
+}
 
 export default function ChecklistTab({ data }) {
   const checklist = data.checklist || [];
@@ -80,7 +95,10 @@ export default function ChecklistTab({ data }) {
                 return (
                   <tr key={item.id} style={{ opacity: done ? 0.55 : 1 }}>
                     <td style={{ padding: "10px 0", borderBottom: "1px solid rgba(0,0,0,0.05)", textAlign: "center", fontSize: 12, color: "#888" }}>{item.num}</td>
-                    <td style={{ padding: "10px 8px 10px 0", borderBottom: "1px solid rgba(0,0,0,0.05)", fontSize: 14, color: done ? "#999" : "#333", textDecoration: done ? "line-through" : "none" }}>{item.task}</td>
+                    <td style={{ padding: "10px 8px 10px 0", borderBottom: "1px solid rgba(0,0,0,0.05)", fontSize: 14, color: done ? "#999" : "#333", textDecoration: done ? "line-through" : "none" }}>
+                      {item.task}
+                      {item.yourAction && !done && <YourActionTag />}
+                    </td>
                     <td style={{ padding: "10px 8px", borderBottom: "1px solid rgba(0,0,0,0.05)", fontSize: 12, color: "#888", textAlign: "right", whiteSpace: "nowrap" }}>{item.category}</td>
                     <td style={{ padding: "10px 8px", borderBottom: "1px solid rgba(0,0,0,0.05)", fontSize: 12, color: "#888", textAlign: "right", whiteSpace: "nowrap" }}>{item.dueLabel || ""}</td>
                     <td style={{ padding: "10px 0 10px 8px", borderBottom: "1px solid rgba(0,0,0,0.05)", fontSize: 10, letterSpacing: 1, textTransform: "uppercase", color: s.color, textAlign: "right", whiteSpace: "nowrap" }}>{s.label}</td>

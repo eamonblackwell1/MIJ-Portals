@@ -97,11 +97,25 @@ The Master Plan tab. Grouped by `Timeline`.
 |---|---|---|
 | `Client` | relation | **Required** |
 | `Item` | title | Visible text |
-| `Timeline` | select | `12mo`, `9mo`, `6mo`, `3mo`, `1mo`, `Wedding Week`. The grouping |
+| `Timeline` | select | `12mo`, `9mo`, `6mo`, `4mo`, `3mo`, `2mo`, `1mo`, `Wedding Week`. The grouping, in that order. Any other value groups last under "Other" |
 | `Status` | select | `Not started`, `In progress`, `Locked`. **`N/A` hides the row entirely** |
 | `Category` | select | Shown as a column |
 | `Due Date` | formula | Derived from Ceremony Date. Read only |
+| `Client Visible` | checkbox | See below. Currently hides nothing |
+| `Waiting on` | select | `Client` shows a small "Your action" tag on the row. `MIJ`, `Venue`, `Vendor` show nothing |
+| `To delete` | checkbox | **Ticked hides the row entirely** |
 | `Notes` | text | **Not rendered.** Safe for internal notes |
+| `Last chased` | date | **Not rendered.** Internal |
+| `Venue deadline` | date | **Not rendered.** Internal |
+| `Applies to` | multi-select | **Not rendered.** Internal |
+
+**`Client Visible` and the default flag.** The portal has one switch, `CHECKLIST_VISIBLE_DEFAULT`
+in `lib/notion/ids.js` (overridable with the environment variable of the same name). While it is
+`true`, which it is today, every checklist row is shown regardless of the checkbox, because the
+existing rows have never been backfilled. A Notion checkbox has no "unset" state, so an unticked
+box cannot be told apart from a never-touched one: with the flag on, unticking `Client Visible` does
+**not** hide a row. Use `Status = N/A` or `To delete` for that. Once the backfill is done, flip the
+flag to `false` and the checklist behaves like MIJ Tasks: only ticked rows reach the couple.
 
 Standard set is 85 rows per client. Rows naming internal MIJ logistics, for example
 "Book MIJ team travel", are better set to `N/A` or reworded, since couples see the `Item` text.
@@ -231,9 +245,11 @@ switched off via `Portal Enabled`.
 - **Invalid select values** are rejected by the API. Copy the exact strings from this document.
 - **`N/A`** on a checklist row hides it completely, which is a feature, not a bug.
 - Changing `Portal Slug` **immediately breaks** any link already sent to that couple.
+- A Client Database row whose `Client Name` starts with `TEMPLATE` is never served as a portal,
+  even with `Portal Enabled` ticked, and the provisioning script skips it.
 
 ## Verifying a change
 
-Data is cached for 2 minutes, so a Notion edit appears on the portal within about 2 to 3 minutes.
+Data is cached for 30 seconds, so a Notion edit appears on the portal within about a minute.
 `Portal Password` and `Portal Enabled` are checked fresh on every login, so those take effect
 immediately.

@@ -43,13 +43,13 @@ Send the couple `https://<domain>/p/<slug>` and the password. Untick `Portal Ena
 | Day by Day | Wedding Week (Client relation) | Title, Date, Description. Run sheet from Wedding Day (Start, Block, Description, Location, Point Person) |
 | Decisions | MIJ Tasks, Owner = Client | Task, Priority, Due Date, Status |
 | Tasks | MIJ Tasks, Owner ≠ Client, Triaged | Task, Owner, Status |
-| Master Plan | Wedding Checklist (Client relation) | Item, Category, Timeline, Due Date, Status |
+| Master Plan | Wedding Checklist (Client relation) | Item, Category, Timeline, Due Date, Status, "Your action" tag when Waiting on = Client |
 | Budget | Budget Items (Client relation) + Client `Budget`, `Planning Fee`, `Currency` | Item, Category, Estimate, Actual, Status, Vendor, Notes |
 | Documents | Client Documents (Client relation) | Name, Type, File or Link, Notes |
 
-Anything not listed here (Wedding Week Events / Tasks / Decisions Needed / Travel & Logistics, Checklist Notes, MIJ Tasks Notes) is internal and never rendered.
+Anything not listed here (Wedding Week Events / Tasks / Decisions Needed / Travel & Logistics, Checklist Notes / Last chased / Venue deadline / Applies to / To delete, MIJ Tasks Notes) is internal and never rendered.
 
-Data is cached per client for two minutes. Rows with `Hide from Portal` ticked are skipped.
+Data is cached per client for 30 seconds. Rows with `Hide from Portal` ticked are skipped. Checklist rows with `Status = N/A` or `To delete` ticked are skipped. MIJ Tasks rows need `Triaged` and `Client Visible` ticked. Checklist `Client Visible` is governed by `CHECKLIST_VISIBLE_DEFAULT` in `lib/notion/ids.js` (currently `true`: shown unless hidden by the above; flip to `false` after the backfill to require the tick). Clients whose name starts with `TEMPLATE` are never served.
 
 ## Debug
 

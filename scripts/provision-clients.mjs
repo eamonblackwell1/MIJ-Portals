@@ -60,6 +60,8 @@ const out = [];
 for (const page of rows) {
   const name = txt(page, "Client Name");
   if (!name) continue;
+  // Template pseudo-clients never get a portal (the app refuses them too).
+  if (/^\s*template/i.test(name)) continue;
   let s = txt(page, "Portal Slug");
   let pw = txt(page, "Portal Password");
   const wasEnabled = chk(page, "Portal Enabled");
