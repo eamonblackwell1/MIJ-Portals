@@ -49,7 +49,7 @@ Send the couple `https://<domain>/p/<slug>` and the password. Untick `Portal Ena
 
 Anything not listed here (Wedding Week Events / Tasks / Decisions Needed / Travel & Logistics, Checklist Notes / Last chased / Venue deadline / Applies to / To delete, MIJ Tasks Notes) is internal and never rendered.
 
-Data is cached per client for 30 seconds. Rows with `Hide from Portal` ticked are skipped. Checklist rows with `Status = N/A` or `To delete` ticked are skipped. MIJ Tasks rows need `Triaged` and `Client Visible` ticked. Checklist `Client Visible` is governed by `CHECKLIST_VISIBLE_DEFAULT` in `lib/notion/ids.js` (currently `true`: shown unless hidden by the above; flip to `false` after the backfill to require the tick). Clients whose name starts with `TEMPLATE` are never served.
+Data is cached per client for 30 seconds. Rows with `Hide from Portal` ticked are skipped. Checklist rows with `Status = N/A` or `To delete` ticked are skipped. MIJ Tasks rows need `Triaged` and `Client Visible` ticked. Checklist rows also need `Client Visible` ticked (governed by `CHECKLIST_VISIBLE_DEFAULT` in `lib/notion/ids.js`, `false` since the Oct 2026 backfill; `true` would show every row regardless). Clients whose name starts with `TEMPLATE` are never served.
 
 ## Debug
 

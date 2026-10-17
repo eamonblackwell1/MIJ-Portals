@@ -101,7 +101,7 @@ The Master Plan tab. Grouped by `Timeline`.
 | `Status` | select | `Not started`, `In progress`, `Locked`. **`N/A` hides the row entirely** |
 | `Category` | select | Shown as a column |
 | `Due Date` | formula | Derived from Ceremony Date. Read only |
-| `Client Visible` | checkbox | See below. Currently hides nothing |
+| `Client Visible` | checkbox | **Unticked hides the row.** See below |
 | `Waiting on` | select | `Client` shows a small "Your action" tag on the row. `MIJ`, `Venue`, `Vendor` show nothing |
 | `To delete` | checkbox | **Ticked hides the row entirely** |
 | `Notes` | text | **Not rendered.** Safe for internal notes |
@@ -110,12 +110,11 @@ The Master Plan tab. Grouped by `Timeline`.
 | `Applies to` | multi-select | **Not rendered.** Internal |
 
 **`Client Visible` and the default flag.** The portal has one switch, `CHECKLIST_VISIBLE_DEFAULT`
-in `lib/notion/ids.js` (overridable with the environment variable of the same name). While it is
-`true`, which it is today, every checklist row is shown regardless of the checkbox, because the
-existing rows have never been backfilled. A Notion checkbox has no "unset" state, so an unticked
-box cannot be told apart from a never-touched one: with the flag on, unticking `Client Visible` does
-**not** hide a row. Use `Status = N/A` or `To delete` for that. Once the backfill is done, flip the
-flag to `false` and the checklist behaves like MIJ Tasks: only ticked rows reach the couple.
+in `lib/notion/ids.js` (overridable with the environment variable of the same name). It is `false`
+since 17 Oct 2026, after the backfill: a checklist row reaches the couple only when `Client Visible`
+is ticked, the same rule as MIJ Tasks. A new row left unticked is invisible. Setting the flag to
+`true` shows every row regardless of the checkbox; a Notion checkbox has no "unset" state, so that
+mode cannot hide anything and is only useful before a backfill.
 
 Standard set is 85 rows per client. Rows naming internal MIJ logistics, for example
 "Book MIJ team travel", are better set to `N/A` or reworded, since couples see the `Item` text.
